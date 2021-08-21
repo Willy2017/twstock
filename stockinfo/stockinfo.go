@@ -6,5 +6,6 @@ type msg struct {
 }
 
 type TwStockResponse struct {
-	MsgArray []msg `json:"msgArray"`
+	MsgArray  []msg  `json:"msgArray"`
+	RtMessage string `json:"rtmessage"`
 }

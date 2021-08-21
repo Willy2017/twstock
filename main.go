@@ -41,6 +41,10 @@ func main() {
 		log.Fatal(jsonErr)
 	}
 
+	if jsonData.RtMessage != string("OK") {
+		return
+	}
+
 	for _, msg := range jsonData.MsgArray {
 		fmt.Printf("Stock number:%s, price:%s", msg.StockNum, msg.Price)
 	}
