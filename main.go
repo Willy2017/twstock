@@ -25,10 +25,19 @@ func main() {
 	getUrl += "&json=1&delay=0"
 	fmt.Println(getUrl)
 
-	res, err := http.Get(getUrl)
-	if nil != err {
+	client := http.Client{}
+
+	req, err := http.NewRequest(http.MethodGet, getUrl, nil)
+	if err != nil {
 		log.Fatal(err)
 	}
+	//req.Header.Set("User-Agent", "xxxx")
+
+	res, err := client.Do(req)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	defer res.Body.Close()
 
 	body, err := ioutil.ReadAll(res.Body)
@@ -41,7 +50,7 @@ func main() {
 		log.Fatal(jsonErr)
 	}
 
-	if jsonData.RtMessage != string("OK") {
+	if jsonData.RtCode != string("0000") {
 		return
 	}
 
