@@ -7,6 +7,8 @@ import (
 	"log"
 	"net/http"
 	"twstock/stockinfo"
+
+	"github.com/gin-gonic/gin"
 )
 
 const url string = "https://mis.twse.com.tw/stock/api/getStockInfo.jsp"
@@ -19,8 +21,8 @@ func main() {
 		return
 	}
 	getUrl += "tse_" + stockNumList[0] + ".tw"
-	for _, stockNum := range stockNumList[1:] {
-		getUrl += "|tse_" + stockNum + ".tw"
+	for i := 1; i < len(stockNumList); i++ {
+		getUrl += "|tse_" + stockNumList[i] + ".tw"
 	}
 	getUrl += "&json=1&delay=0"
 	fmt.Println(getUrl)
@@ -54,7 +56,19 @@ func main() {
 		return
 	}
 
-	for _, msg := range jsonData.MsgArray {
-		fmt.Printf("Stock number:%s, price:%s", msg.StockNum, msg.Price)
+	for i := range jsonData.MsgArray {
+		if jsonData.MsgArray[i].Price == "-" {
+			fmt.Printf("Stock number:%s, price:%s", jsonData.MsgArray[i].StockNum, jsonData.MsgArray[i].LastPrice)
+		} else {
+			fmt.Printf("Stock number:%s, price:%s", jsonData.MsgArray[i].StockNum, jsonData.MsgArray[i].Price)
+		}
 	}
+
+	r := gin.Default()
+	r.GET("/ping", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "pong",
+		})
+	})
+	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
